@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Day Reconstruction</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..700&family=Instrument+Sans:ital,wght@0,400..700;1,400&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app" id="app">
+      <header class="top">
+        <div class="brand">
+          <h1>Day Reconstruction</h1>
+          <p class="sub">
+            Tap the timeline to add what you did today, rate the day, answer a
+            few short questions, then press Submit. About 15 minutes; best done
+            at the end of the day while it's fresh.
+          </p>
+        </div>
+        <div class="pid">
+          <label for="pid">Your name</label>
+          <input
+            id="pid"
+            placeholder="First and last name"
+            autocomplete="name"
+            spellcheck="false"
+          />
+          <span class="saved" id="saved">Saved</span>
+        </div>
+      </header>
+
+      <h2 class="section-title">Your days</h2>
+      <section class="days" id="days">
+        <div id="dayChips" style="display: contents"></div>
+        <div class="addday" id="addDay">
+          <button class="btn-sm" id="addDayBtn" type="button">
+            + Add a day
+          </button>
+          <span id="addDayForm" hidden
+            ><input type="date" id="newDate" aria-label="Date" />
+            <button class="btn-sm btn-primary" id="addDayGo" type="button">
+              Add
+            </button></span
+          >
+        </div>
+      </section>
+
+      <section class="day" id="daySection" hidden>
+        <div class="day-head">
+          <h2 id="dayTitle"></h2>
+          <div class="status" id="dayStatus"></div>
+          <button class="link" id="removeDay" type="button">
+            Remove this day
+          </button>
+        </div>
+
+        <div class="work">
+          <div class="tl-col">
+            <div class="tl-tools">
+              <span class="hint"
+                >Tap an empty spot to add a block. Tap a block to edit it.</span
+              >
+              <button class="btn-sm" id="editTags" type="button">
+                Edit tags
+              </button>
+            </div>
+            <div class="expand-row">
+              <button class="link" id="expand" type="button"></button>
+            </div>
+            <div class="tl" id="tl">
+              <div class="hours" id="hours"></div>
+              <div class="lane" id="lane"></div>
+              <div class="now" id="now" hidden></div>
+            </div>
+          </div>
+          <aside class="inspector" id="inspector" aria-live="polite"></aside>
+        </div>
+
+        <section class="panel" id="summary">
+          <div>
+            <h3>Your day overall</h3>
+          </div>
+          <div id="scales" style="display: contents"></div>
+        </section>
+
+        <section class="panel" id="reflection" hidden>
+          <div>
+            <h3>Looking back</h3>
+            <p class="help">
+              A few sentences is plenty; specific moments are more useful than
+              general impressions.
+            </p>
+          </div>
+          <div id="reflectionQs" style="display: contents"></div>
+        </section>
+
+        <details class="panel bg" id="background">
+          <summary class="panel-head">
+            <div>
+              <h3>About your work</h3>
+            </div>
+            <div class="status" id="bgStatus"></div>
+          </summary>
+          <div id="bgQs" style="display: contents"></div>
+        </details>
+
+        <section class="panel" id="submitPanel">
+          <div>
+            <h3>Submit</h3>
+          </div>
+          <div class="submit-row">
+            <button class="btn-primary" id="submitBtn" type="button">
+              Submit
+            </button>
+            <button class="btn" id="dlDayBtn" type="button" hidden>
+              Download this day (.json)
+            </button>
+          </div>
+          <p class="msg" id="submitMsg"></p>
+          <details class="databox" id="dataBox" hidden>
+            <summary>
+              Your data as text (if the download didn't start, copy this and
+              paste it where the study team asked)
+            </summary>
+            <textarea id="dataText" readonly spellcheck="false"></textarea>
+            <div class="submit-row" style="margin-top: 8px">
+              <button class="btn-sm" id="copyBtn" type="button">Copy</button
+              ><span class="help" id="copyMsg"></span>
+            </div>
+          </details>
+        </section>
+      </section>
+
+      <div class="empty" id="emptyState" hidden>
+        No days yet. Add a day above to start.
+      </div>
+
+      <footer>
+        <button class="link" id="dlAll" type="button">Download all days</button>
+        <button class="link" id="clearAll" type="button">
+          Clear everything on this device
+        </button>
+        <span id="clearConfirm" hidden
+          >This deletes every day you entered here.
+          <button class="link" id="clearYes" type="button">Yes, clear</button> ·
+          <button class="link" id="clearNo" type="button">Keep</button></span
+        >
+      </footer>
+    </div>
+
+    <div class="modal" id="tagmgr" hidden>
+      <div class="backdrop" id="tagBackdrop"></div>
+      <div class="sheet" role="dialog" aria-labelledby="tagmgrTitle">
+        <div class="insp-head">
+          <h3 id="tagmgrTitle">Tags</h3>
+          <button class="btn-sm" id="tagClose" type="button">Done</button>
+        </div>
+        <p class="help">
+          Rename a tag to suit how you think about your day, or add your own.
+          Deleting a tag leaves its blocks untagged.
+        </p>
+        <div class="tag-list" id="tagList"></div>
+        <div class="tag-add">
+          <input
+            id="tagNew"
+            placeholder="New tag, e.g. Lab work"
+            aria-label="New tag name"
+          /><button class="btn-sm" id="tagAdd" type="button">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" hidden></div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
